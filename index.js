@@ -28,17 +28,15 @@ server.post('/api/users', (req, res) => {
 			res.status(201).json(user);
 		})
 		.catch(err => {
-			res
-				.status(500)
-				.json({
-					ERROR: 'There was an error while saving the user to the database'
-				});
+			res.status(500).json({
+				ERROR: 'There was an error while saving the user to the database'
+			});
 			return;
 		});
 });
 
 server.get('/api/users', (req, res) => {
-	// db.find() returns a promose and we need then and catch
+	// db.find() returns a promise and we need then and catch
 	data
 		.find()
 		.then(users => {
@@ -47,7 +45,9 @@ server.get('/api/users', (req, res) => {
 			res.status(200).json(users);
 		})
 		.catch(err => {
-			res.status(500).json({ message: 'error getting users' });
+			res
+				.status(500)
+				.json({ error: 'The users information could not be retrieved.' });
 		});
 });
 
@@ -78,6 +78,9 @@ server.get('/api/users/:id', (req, res) => {
 // Delete a user
 server.delete('/api/users/:id', (req, res) => {
 	const userId = req.params.id;
+	if (userId === 0) {
+		res.status(404).json({ ERROR: 'User with this ID does not exist' });
+	}
 
 	data
 		.remove(userId)
@@ -85,7 +88,7 @@ server.delete('/api/users/:id', (req, res) => {
 			res.status(200).json({ message: 'user deleted' });
 		})
 		.catch(err => {
-			res.status(500).json({ message: 'error removing user' });
+			res.status(500).json({ ERROR: 'The user could not be removed' });
 		});
 });
 
@@ -95,16 +98,24 @@ server.put('/api/users/:id', (req, res) => {
 	const { id } = req.params;
 	const changes = req.body;
 
+	if (!changes.name || !changes.bio) {
+		res.status(400).json({ ERROR: 'Provide name and bio for user' });
+	}
+
 	data
 		.update(id, changes)
 		.then(updated => {
-			if (updated) {
-				res.status(200).json(updated);
-			} else {
-				res.status(404).json({ message: 'user not found' });
+			if (updated === 0) {
+				res.status(404).json({ ERROR: 'User with that ID does not exist' });
+				return;
 			}
 		})
+		.then(user => {
+			res.status(201).json({ user });
+		})
 		.catch(err => {
-			res.status(500).json({ message: 'error updating user' });
+			res
+				.status(500)
+				.json({ ERROR: 'The user information could not be modified.' });
 		});
 });
