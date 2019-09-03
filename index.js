@@ -7,6 +7,7 @@ const data = require('./data/db');
 const server = express();
 
 server.use(express.json());
+server.use(cors());
 
 const port = 5000;
 server.listen(port, () => console.log('server running'));
@@ -111,7 +112,7 @@ server.put('/api/users/:id', (req, res) => {
 			}
 		})
 		.then(user => {
-			res.status(201).json({ user });
+			res.status(200).json({ user });
 		})
 		.catch(err => {
 			res
