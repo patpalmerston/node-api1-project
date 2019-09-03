@@ -8,6 +8,9 @@ const server = express();
 
 server.use(express.json());
 
+const port = 5000;
+server.listen(port, () => console.log('server running'));
+
 server.get('/', (req, res) => {
 	res.send('Hello from Express');
 });
@@ -17,7 +20,7 @@ server.post('/api/users', (req, res) => {
 	const userData = req.body;
 	console.log('userData', userData);
 	data
-		.add(userData)
+		.insert(userData)
 		.then(user => {
 			res.status(201).json(user);
 		})
@@ -53,6 +56,3 @@ server.delete('/api/user/:id', (req, res) => {
 			res.status(500).json({ message: 'error removing user' });
 		});
 });
-
-const port = 5000;
-server.listen(port, () => console.log('server running'));
