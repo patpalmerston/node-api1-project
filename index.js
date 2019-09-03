@@ -70,3 +70,23 @@ server.delete('/api/users/:id', (req, res) => {
 			res.status(500).json({ message: 'error removing user' });
 		});
 });
+
+// update a user
+
+server.put('/api/users/:id', (req, res) => {
+	const { id } = req.params;
+	const changes = req.body;
+
+	data
+		.update(id, changes)
+		.then(updated => {
+			if (updated) {
+				res.status(200).json(updated);
+			} else {
+				res.status(404).json({ message: 'user not found' });
+			}
+		})
+		.catch(err => {
+			res.status(500).json({ message: 'error updating user' });
+		});
+});
